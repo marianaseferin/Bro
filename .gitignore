@@ -1,0 +1,17 @@
+# Secrets — NUNCA commitar
+.env
+.env.local
+.env.*.local
+
+# Claude Code — contém API keys
+.claude/settings.json
+
+# Node
+node_modules/
+.next/
+dist/
+build/
+
+# Sistema
+.DS_Store
+*.log
