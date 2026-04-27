@@ -1,0 +1,101 @@
+.feedback-band {
+  position: relative;
+  margin-top: 80px;
+  overflow: hidden;
+  background: #0a0d0a;
+}
+
+.feedback-head {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 24px;
+  align-items: end;
+  padding: 120px 40px 48px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  border-bottom: 1px solid var(--line);
+}
+
+.testimonials {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: var(--maxw);
+  margin: 48px auto 120px;
+  padding: 0 40px;
+}
+
+.testimonial {
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
+  border: 1px solid var(--line);
+  padding: 36px;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.3s ease;
+}
+.testimonial:hover {
+  border-color: var(--moss);
+  transform: translateY(-2px);
+}
+.testimonial::before {
+  content: "\201C";
+  position: absolute;
+  top: 18px; right: 28px;
+  font-family: var(--title);
+  font-size: 80px;
+  color: var(--forest);
+  line-height: 1;
+}
+
+.t-person {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.t-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--line-2);
+  background: var(--bg-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--title);
+  color: var(--yellow);
+  font-size: 20px;
+}
+
+.t-name {
+  font-family: var(--title);
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.t-role {
+  font-family: var(--sub);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.t-quote {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #cfd3cb;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .feedback-head { padding-left: 20px; padding-right: 20px; grid-template-columns: 40px 1fr; }
+  .feedback-head .section-sub { grid-column: 1 / -1; text-align: left; max-width: none; }
+  .testimonials { grid-template-columns: 1fr; padding: 0 20px; }
+}

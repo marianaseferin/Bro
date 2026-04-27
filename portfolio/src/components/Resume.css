@@ -1,0 +1,132 @@
+.resume { padding-bottom: 120px; }
+
+.resume-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 60px;
+  margin-top: 48px;
+}
+
+.resume-sidebar h5 {
+  font-family: var(--sub);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.resume-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px;
+}
+.resume-sidebar li {
+  padding: 10px 0;
+  font-size: 14px;
+  color: #cfd3cb;
+  display: flex;
+  gap: 10px;
+  line-height: 1.5;
+}
+.resume-sidebar li::before {
+  content: "▲";
+  color: var(--moss);
+  font-size: 8px;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.edu b {
+  display: block;
+  font-family: var(--sub);
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.edu div {
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.edu div:last-child { border-bottom: 1px solid var(--line); }
+.edu small {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+/* Timeline */
+.timeline { position: relative; }
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 8px; top: 10px; bottom: 10px;
+  width: 1px;
+  background: var(--line-2);
+}
+
+.job {
+  position: relative;
+  padding: 0 0 48px 40px;
+}
+.job::before {
+  content: "";
+  position: absolute;
+  left: 3px; top: 14px;
+  width: 11px; height: 11px;
+  background: var(--yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--line-2);
+}
+.job.past::before {
+  background: var(--moss);
+}
+
+.job .role {
+  font-family: var(--title);
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  margin: 0 0 4px;
+}
+.job .company {
+  font-family: var(--sub);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--yellow);
+  letter-spacing: 0.05em;
+}
+.job .period {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 10px 0 18px;
+}
+.job ul { margin: 0; padding: 0; list-style: none; }
+.job li {
+  padding: 6px 0;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #c5c9c0;
+  display: flex;
+  gap: 12px;
+}
+.job li::before {
+  content: "";
+  flex-shrink: 0;
+  width: 4px; height: 4px;
+  background: var(--moss);
+  border-radius: 50%;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .resume-grid { grid-template-columns: 1fr; }
+}
