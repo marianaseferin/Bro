@@ -54,6 +54,9 @@ export const PLAN_LIMITS = {
 
 export type PlanLimit = keyof (typeof PLAN_LIMITS)["FREE"]
 
-export function getPlanLimit(plan: User["plan"], resource: PlanLimit) {
+export function getPlanLimit<K extends PlanLimit>(
+  plan: User["plan"],
+  resource: K
+): (typeof PLAN_LIMITS)[User["plan"]][K] {
   return PLAN_LIMITS[plan][resource]
 }
