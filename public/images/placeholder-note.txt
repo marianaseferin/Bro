@@ -1,0 +1,13 @@
+Place your Bro mascot PNG images here:
+- bro-default.png    (standing, hands on hips)
+- bro-excited.png    (jumping with excitement)
+- bro-chef.png       (chef hat with whisk and spoon)
+- bro-meditation.png (sitting cross-legged, Om pose)
+- bro-muscle.png     (flexing biceps)
+- bro-sad.png        (sad/guilty expression with notebook)
+- bro-doctor.png     (doctor pose with clipboard)
+- bro-tired.png      (tired expression with coffee cup)
+- bro-weightlifting.png (lifting barbell)
+
+Source: The broccoli mascot images you provided in the chat.
+Export each pose as a transparent PNG at 256x256px minimum.

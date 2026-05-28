@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  FREE
+  TRIAL
+  PRO
+}
+
+enum IngredientCategory {
+  VEGETABLE
+  FRUIT
+  GRAIN
+  PROTEIN
+  DAIRY
+  LEGUME
+  NUT
+  SPICE
+  HERB
+  OIL
+  SAUCE
+  OTHER
+}
+
+enum GoalType {
+  REDUCE_MEAT
+  VEGAN
+  VEGETARIAN
+  WHOLE_FOODS
+  LOW_CARB
+  HIGH_PROTEIN
+  GENERAL_HEALTH
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+}
+
+enum InteractionAction {
+  COOK
+  SWAP
+  SAVE
+  SKIP
+  SHARE
+}
+
+model User {
+  id                     String    @id @default(cuid())
+  name                   String?
+  email                  String    @unique
+  emailVerified          DateTime?
+  image                  String?
+  plan                   Plan      @default(FREE)
+  trialEndsAt            DateTime?
+  stripeCustomerId       String?   @unique
+  stripePriceId          String?
+  stripeSubscriptionId   String?   @unique
+  stripeCurrentPeriodEnd DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  suggestions  Suggestion[]
+  interactions Interaction[]
+  goals        Goal[]
+  savedRecipes SavedRecipe[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Ingredient {
+  id       String             @id @default(cuid())
+  name     String             @unique
+  category IngredientCategory @default(OTHER)
+  emoji    String?
+
+  recipeIngredients RecipeIngredient[]
+  suggestionInputs  SuggestionIngredient[]
+}
+
+model Recipe {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  steps       String[]
+  timeMinutes Int      @default(30)
+  servings    Int      @default(2)
+  tags        String[]
+  imageUrl    String?
+  difficulty  String   @default("easy")
+  calories    Int?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  ingredients RecipeIngredient[]
+  suggestions Suggestion[]
+  savedBy     SavedRecipe[]
+}
+
+model RecipeIngredient {
+  id           String  @id @default(cuid())
+  recipeId     String
+  ingredientId String
+  amount       String
+  optional     Boolean @default(false)
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([recipeId, ingredientId])
+}
+
+model Suggestion {
+  id              String   @id @default(cuid())
+  userId          String
+  preference      String?
+  alternativeText String?  @db.Text
+  mainRecipeId    String?
+  createdAt       DateTime @default(now())
+
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mainRecipe   Recipe?                @relation(fields: [mainRecipeId], references: [id])
+  ingredients  SuggestionIngredient[]
+  interactions Interaction[]
+}
+
+model SuggestionIngredient {
+  id           String @id @default(cuid())
+  suggestionId String
+  ingredientId String
+
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model Interaction {
+  id           String            @id @default(cuid())
+  userId       String
+  suggestionId String
+  action       InteractionAction
+  timestamp    DateTime          @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+}
+
+model Goal {
+  id        String     @id @default(cuid())
+  userId    String
+  type      GoalType
+  startDate DateTime   @default(now())
+  status    GoalStatus @default(ACTIVE)
+  notes     String?    @db.Text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavedRecipe {
+  id       String   @id @default(cuid())
+  userId   String
+  recipeId String
+  savedAt  DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+}

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" fill="none">
+  <!-- Bro broccoli mascot placeholder -->
+  <!-- Replace with actual PNG files: bro-default.png, bro-excited.png, etc. -->
+  <ellipse cx="50" cy="38" rx="32" ry="30" fill="#2f6b3e"/>
+  <ellipse cx="35" cy="30" rx="14" ry="14" fill="#3d8a50"/>
+  <ellipse cx="62" cy="28" rx="16" ry="15" fill="#3d8a50"/>
+  <ellipse cx="50" cy="22" rx="12" ry="12" fill="#4a9e5c"/>
+  <rect x="42" y="62" width="16" height="35" rx="6" fill="#5aab6e"/>
+  <!-- eyes -->
+  <circle cx="43" cy="38" r="3.5" fill="white"/>
+  <circle cx="57" cy="38" r="3.5" fill="white"/>
+  <circle cx="44" cy="38.5" r="1.8" fill="#1c2b18"/>
+  <circle cx="58" cy="38.5" r="1.8" fill="#1c2b18"/>
+  <!-- smile -->
+  <path d="M43 47 Q50 53 57 47" stroke="#1c2b18" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- arms -->
+  <ellipse cx="27" cy="80" rx="6" ry="18" rx="6" fill="#5aab6e" transform="rotate(-15 27 80)"/>
+  <ellipse cx="73" cy="80" rx="6" ry="18" fill="#5aab6e" transform="rotate(15 73 80)"/>
+  <!-- legs -->
+  <rect x="38" y="95" width="10" height="18" rx="5" fill="#4a9e5c"/>
+  <rect x="52" y="95" width="10" height="18" rx="5" fill="#4a9e5c"/>
+</svg>
