@@ -51,9 +51,9 @@ export async function POST(req: Request) {
 
     case "invoice.payment_succeeded": {
       const invoice = event.data.object as Stripe.Invoice
-      const subscriptionId =
-        (invoice as Record<string, unknown>).subscription as string | undefined ??
-        (invoice as Record<string, unknown>).parent?.subscription_details?.subscription as string | undefined
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const inv = invoice as any
+      const subscriptionId = (inv.subscription ?? inv.parent?.subscription_details?.subscription) as string | undefined
 
       if (!subscriptionId) break
 
