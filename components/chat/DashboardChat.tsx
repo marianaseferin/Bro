@@ -17,14 +17,22 @@ const GREETINGS = [
   "Ready to cook? 💪 Tell me what ingredients you have, what you're craving, or just ask me anything food-related!",
 ]
 
+const DEFAULT_GREETING = GREETINGS[0]
+
 export function DashboardChat() {
-  const [messages, setMessages] = useState<Message[]>(() => [{
-    role: "bro",
-    content: GREETINGS[Math.floor(Math.random() * GREETINGS.length)],
-  }])
+  const [messages, setMessages] = useState<Message[]>([
+    { role: "bro", content: DEFAULT_GREETING },
+  ])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)]
+    if (greeting !== DEFAULT_GREETING) {
+      setMessages([{ role: "bro", content: greeting }])
+    }
+  }, [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -57,10 +65,8 @@ export function DashboardChat() {
   }
 
   function clearChat() {
-    setMessages([{
-      role: "bro",
-      content: GREETINGS[Math.floor(Math.random() * GREETINGS.length)],
-    }])
+    const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)]
+    setMessages([{ role: "bro", content: greeting }])
     setInput("")
   }
 
@@ -112,9 +118,7 @@ export function DashboardChat() {
           ].map((prompt) => (
             <button
               key={prompt}
-              onClick={() => {
-                setInput(prompt)
-              }}
+              onClick={() => setInput(prompt)}
               className="text-xs px-3 py-1.5 rounded-full border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             >
               {prompt}
