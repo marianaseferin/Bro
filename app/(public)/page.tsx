@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { HeroChat } from "@/components/chat/HeroChat"
+import { BroImage } from "@/components/bro/BroImage"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ const FEATURES = [
     mood: "chef",
     title: "Ingredient-to-Meal Magic",
     description:
-      "Tell Bro what's in your fridge. Get instant recipes based on what you actually have — no waste, no stress.",
+      "Tell Bro what’s in your fridge. Get instant recipes based on what you actually have — no waste, no stress.",
   },
   {
     icon: RefreshCw,
@@ -71,15 +72,7 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-2.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/bro-default.png"
-              alt="BroCook"
-              className="h-8 w-8 object-contain"
-              onError={(e) => {
-                ;(e.target as HTMLImageElement).src = "/images/bro-default.svg"
-              }}
-            />
+            <BroImage src="/images/bro-default.png" alt="BroCook" className="h-8 w-8 object-contain" />
             <span className="text-lg font-bold text-primary">BroCook</span>
           </div>
           <div className="flex items-center gap-3">
@@ -112,16 +105,15 @@ export default function LandingPage() {
               Plant-based made fun &amp; easy
             </Badge>
             <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-foreground">
-              Meet{" "}
-              <span className="text-primary">Bro.</span>
+              Meet <span className="text-primary">Bro.</span>
               <br />
               Your personal
               <br />
               <span className="text-accent">cooking buddy. 🥦</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
-              Chat with Bro like a friend — tell him what you have, what you feel like, and get a
-              delicious plant-based recipe instantly. No login needed to start.
+              Chat with Bro like a friend — tell him what you have, what you feel like, and get
+              a delicious plant-based recipe instantly. No login needed to start.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="gap-2">
@@ -144,21 +136,16 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-            {/* Mascot row */}
             <div className="flex gap-4 pt-2">
               {["bro-excited", "bro-chef", "bro-meditation", "bro-muscle"].map((mood) => (
                 <div
                   key={mood}
                   className="h-16 w-16 transition-transform hover:scale-110 duration-200 cursor-default"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <BroImage
                     src={`/images/${mood}.png`}
                     alt={mood.replace("bro-", "")}
                     className="h-full w-full object-contain drop-shadow-md"
-                    onError={(e) => {
-                      ;(e.target as HTMLImageElement).src = "/images/bro-default.svg"
-                    }}
                   />
                 </div>
               ))}
@@ -184,7 +171,7 @@ export default function LandingPage() {
               {
                 step: "1",
                 title: "Chat with Bro",
-                desc: "Tell him what's in your fridge or what you're craving. No account needed.",
+                desc: "Tell him what’s in your fridge or what you’re craving. No account needed.",
                 icon: "💬",
               },
               {
@@ -233,15 +220,11 @@ export default function LandingPage() {
                     <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <BroImage
                       src={`/images/bro-${mood}.png`}
                       alt=""
                       aria-hidden
                       className="h-12 w-12 object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow"
-                      onError={(e) => {
-                        ;(e.target as HTMLImageElement).style.display = "none"
-                      }}
                     />
                   </div>
                   <h3 className="font-semibold">{title}</h3>
@@ -256,19 +239,15 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="bg-primary/5 border-y border-primary/10 py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center space-y-6">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <BroImage
             src="/images/bro-excited.png"
             alt="Bro excited"
             className="h-24 w-24 object-contain mx-auto drop-shadow-lg"
-            onError={(e) => {
-              ;(e.target as HTMLImageElement).src = "/images/bro-default.svg"
-            }}
           />
           <h2 className="text-3xl font-bold">Ready to start your plant-based journey?</h2>
           <p className="text-muted-foreground text-lg">
-            Start chatting with Bro right now — free, no login needed. When you&apos;re ready to save
-            recipes and unlock all features, create your free account.
+            Start chatting with Bro right now — free, no login needed. When you’re ready to
+            save recipes and unlock all features, create your free account.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button asChild size="lg" className="gap-2">
@@ -289,15 +268,7 @@ export default function LandingPage() {
       <footer className="py-10 border-t border-border">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/bro-default.png"
-              alt="BroCook"
-              className="h-6 w-6 object-contain"
-              onError={(e) => {
-                ;(e.target as HTMLImageElement).src = "/images/bro-default.svg"
-              }}
-            />
+            <BroImage src="/images/bro-default.png" alt="BroCook" className="h-6 w-6 object-contain" />
             <span className="font-bold text-sm text-primary">BroCook</span>
           </div>
           <p className="text-xs text-muted-foreground">Made with plants and love. 🌱</p>

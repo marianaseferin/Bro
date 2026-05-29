@@ -3,6 +3,7 @@ import { CheckCircle, Sparkles, Leaf, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { BroImage } from "@/components/bro/BroImage"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Pricing — BroCook" }
@@ -38,15 +39,7 @@ export default function PricingPage() {
       <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/bro-default.png"
-              alt="BroCook"
-              className="h-8 w-8 object-contain"
-              onError={(e) => {
-                ;(e.target as HTMLImageElement).src = "/images/bro-default.svg"
-              }}
-            />
+            <BroImage src="/images/bro-default.png" alt="BroCook" className="h-8 w-8 object-contain" />
             <span className="text-lg font-bold text-primary">BroCook</span>
           </Link>
           <Button asChild variant="ghost" size="sm">
@@ -58,18 +51,14 @@ export default function PricingPage() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-20">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <BroImage
             src="/images/bro-excited.png"
             alt="Bro excited"
             className="h-20 w-20 object-contain mx-auto drop-shadow"
-            onError={(e) => {
-              ;(e.target as HTMLImageElement).src = "/images/bro-default.svg"
-            }}
           />
           <h1 className="text-4xl font-extrabold">Simple, honest pricing 🌿</h1>
           <p className="text-lg text-muted-foreground max-w-md mx-auto">
-            Start free with no credit card. Upgrade when you&apos;re ready to unlock everything.
+            Start free with no credit card. Upgrade when you’re ready to unlock everything.
           </p>
         </div>
 
@@ -166,7 +155,7 @@ export default function PricingPage() {
                 a: "Nope! You can chat with Bro and get up to 3 recipe suggestions per day without any account. Sign up free to unlock unlimited suggestions and save your recipes.",
               },
               {
-                q: "What's included in the free trial?",
+                q: "What’s included in the free trial?",
                 a: "The 14-day trial gives you full Pro access — unlimited suggestions, habit tracking, goals, and all features. No credit card required to start.",
               },
               {
@@ -175,7 +164,7 @@ export default function PricingPage() {
               },
               {
                 q: "Is BroCook really plant-based only?",
-                a: "Bro specialises in plant-based cooking, but many recipes can easily be adapted. He'll always suggest the best plant-based version for you!",
+                a: "Bro specialises in plant-based cooking, but many recipes can easily be adapted. He’ll always suggest the best plant-based version for you!",
               },
             ].map(({ q, a }) => (
               <div key={q} className="border border-border rounded-xl p-5 space-y-2">
