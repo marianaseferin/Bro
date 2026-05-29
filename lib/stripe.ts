@@ -17,7 +17,8 @@ function getStripe(): Stripe {
 export const stripe = new Proxy({} as Stripe, {
   get(_, prop: string) {
     const instance = getStripe()
-    const value = (instance as Record<string, unknown>)[prop]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const value = (instance as any)[prop]
     return typeof value === "function" ? (value as Function).bind(instance) : value
   },
 })
