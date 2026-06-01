@@ -34,56 +34,68 @@ Rules:
 - Be warm, playful, and encouraging
 - Keep the whole response under 200 words
 - If no ingredients were listed, ask what they have before suggesting
-- You can answer follow-up questions about substitutions, tips, etc.`
+- You can answer follow-up questions about substitutions, tips, etc.
+- Respond in the same language the user writes in`
 
-// ---------------------------------------------------------------------------
-// Google Gemini (FREE tier — 1 500 req/day, no credit card needed)
-// ---------------------------------------------------------------------------
-async function askGemini(
-  message: string,
-  history: ChatMessage[]
-): Promise<string | null> {
+// Gemini: ensure messages alternate user/model as required by the API
+function buildGeminiContents(history: ChatMessage[], message: string) {
+  const contents: { role: string; parts: { text: string }[] }[] = []
+
+  // Only include proper user->model pairs from history (skip leading bro messages)
+  let i = 0
+  while (i < history.length) {
+    if (history[i].role === "user") {
+      contents.push({ role: "user", parts: [{ text: history[i].content }] })
+      if (i + 1 < history.length && history[i + 1].role === "bro") {
+        contents.push({ role: "model", parts: [{ text: history[i + 1].content }] })
+        i += 2
+      } else {
+        i += 1
+      }
+    } else {
+      i += 1 // skip orphan bro messages at start
+    }
+  }
+
+  contents.push({ role: "user", parts: [{ text: message }] })
+  return contents
+}
+
+async function askGemini(message: string, history: ChatMessage[]): Promise<string | null> {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) return null
 
-  const contents = [
-    ...history.slice(-8).map((m) => ({
-      role: m.role === "bro" ? "model" : "user",
-      parts: [{ text: m.content }],
-    })),
-    { role: "user", parts: [{ text: message }] },
-  ]
+  // Try newer model first, fall back to stable
+  const models = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-flash-latest"]
 
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents,
-          generationConfig: { maxOutputTokens: 600, temperature: 0.8 },
-        }),
+  for (const model of models) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            contents: buildGeminiContents(history, message),
+            generationConfig: { maxOutputTokens: 600, temperature: 0.8 },
+          }),
+        }
+      )
+      if (!res.ok) continue
+      const data = (await res.json()) as {
+        candidates?: Array<{ content: { parts: Array<{ text: string }> } }>
       }
-    )
-    if (!res.ok) return null
-    const data = (await res.json()) as {
-      candidates?: Array<{ content: { parts: Array<{ text: string }> } }>
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text
+      if (text) return text
+    } catch {
+      continue
     }
-    return data.candidates?.[0]?.content?.parts?.[0]?.text ?? null
-  } catch {
-    return null
   }
+  return null
 }
 
-// ---------------------------------------------------------------------------
-// Anthropic Claude (paid, better quality — optional upgrade)
-// ---------------------------------------------------------------------------
-async function askClaude(
-  message: string,
-  history: ChatMessage[]
-): Promise<string | null> {
+async function askClaude(message: string, history: ChatMessage[]): Promise<string | null> {
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) return null
 
@@ -111,18 +123,14 @@ async function askClaude(
       }),
     })
     if (!res.ok) return null
-    const data = (await res.json()) as {
-      content?: Array<{ type: string; text: string }>
-    }
+    const data = (await res.json()) as { content?: Array<{ type: string; text: string }> }
     return data.content?.find((b) => b.type === "text")?.text ?? null
   } catch {
     return null
   }
 }
 
-// ---------------------------------------------------------------------------
-// In-memory recipe library — always available (no API key / empty DB)
-// ---------------------------------------------------------------------------
+// In-memory library — fallback when no AI key is configured
 const LIBRARY = [
   {
     title: "Crispy Tofu Stir-Fry",
@@ -143,7 +151,7 @@ const LIBRARY = [
     keys: ["roast", "vegetable", "veggie", "quinoa", "bowl", "sweet potato", "broccoli", "avocado"],
     time: 35, servings: 2, tags: "whole-foods • vegan • meal-prep",
     desc: "Colorful bowl with roasted veggies, quinoa, and tahini dressing.",
-    how: "1. Roast sweet potato, broccoli & bell pepper at 200°C / 25 min.\n2. Cook quinoa.\n3. Assemble: quinoa, roasted veggies, avocado.\n4. Drizzle tahini + lemon.",
+    how: "1. Roast sweet potato, broccoli & bell pepper at 200°C / 25 min.\n2. Cook quinoa.\n3. Assemble with avocado. Drizzle tahini + lemon.",
   },
   {
     title: "Black Bean Tacos",
@@ -157,21 +165,21 @@ const LIBRARY = [
     keys: ["mushroom", "lentil", "lentils", "pasta", "bolognese", "tomato", "italian"],
     time: 40, servings: 4, tags: "comfort • high-protein • vegan",
     desc: "Hearty plant-based pasta sauce. Nobody misses the meat.",
-    how: "1. Brown mushrooms in olive oil 8 min.\n2. Add onion, garlic, carrot.\n3. Add lentils + tomatoes + 500ml water. Simmer 20 min.\n4. Serve over pasta.",
+    how: "1. Brown mushrooms in olive oil 8 min.\n2. Add onion, garlic, carrot.\n3. Add lentils + tomatoes + 500ml water. Simmer 20 min. Serve over pasta.",
   },
   {
     title: "Garlic Pasta with Spinach",
     keys: ["pasta", "garlic", "spinach", "olive oil", "simple", "quick", "spaghetti"],
     time: 15, servings: 2, tags: "quick • simple • vegan",
     desc: "Simple, garlicky pasta with wilted spinach. 15-minute magic.",
-    how: "1. Cook pasta; reserve 1 cup pasta water.\n2. Sauté lots of garlic in olive oil.\n3. Add spinach, wilt.\n4. Toss pasta + pasta water. Season well.",
+    how: "1. Cook pasta; reserve 1 cup pasta water.\n2. Sauté lots of garlic in olive oil.\n3. Add spinach, wilt. Toss pasta + pasta water. Season well.",
   },
   {
     title: "Quick Fried Rice",
     keys: ["rice", "fried", "soy", "carrot", "peas", "asian", "quick", "leftover", "garlic"],
     time: 15, servings: 2, tags: "quick • asian • vegan",
     desc: "The best use of leftover rice — ready in 15 minutes.",
-    how: "1. Heat oil on high; add garlic + any veg (carrot, peas, pepper).\n2. Add cold rice, fry 3 min.\n3. Add soy sauce, toss everything.",
+    how: "1. Heat oil high; add garlic + any veg.\n2. Add cold rice, fry 3 min.\n3. Add soy sauce, toss everything.",
   },
   {
     title: "Lentil & Vegetable Soup",
@@ -185,14 +193,14 @@ const LIBRARY = [
     keys: ["avocado", "bread", "toast", "chickpea", "chickpeas", "breakfast", "quick"],
     time: 10, servings: 1, tags: "quick • breakfast • vegan",
     desc: "Upgraded avocado toast with crispy chickpeas for protein.",
-    how: "1. Toast bread.\n2. Mash avocado with lemon, salt & pepper.\n3. Pan-fry chickpeas with paprika until crispy.\n4. Pile avocado on toast, top with chickpeas.",
+    how: "1. Toast bread.\n2. Mash avocado with lemon, salt & pepper.\n3. Pan-fry chickpeas with paprika until crispy. Top toast.",
   },
   {
     title: "Banana Oat Smoothie Bowl",
     keys: ["banana", "oat", "oats", "smoothie", "breakfast", "fruit", "coconut"],
     time: 5, servings: 1, tags: "breakfast • quick • vegan",
     desc: "Thick, creamy smoothie bowl — 5-minute breakfast upgrade.",
-    how: "1. Blend 2 frozen bananas + ½ cup oats + coconut milk until thick.\n2. Pour into bowl.\n3. Top with fresh fruit, walnuts, and peanut butter drizzle.",
+    how: "1. Blend 2 frozen bananas + ½ cup oats + coconut milk.\n2. Pour into bowl.\n3. Top with fresh fruit, walnuts, peanut butter.",
   },
 ]
 
@@ -202,6 +210,7 @@ const STOP_WORDS = new Set([
   "that","it","at","on","be","this","but","not","from","by","they","we","he",
   "she","you","how","any","just","also","get","got","need","something","anything",
   "please","would","like","help","suggest","recipe","recipes","idea","ideas",
+  "tenho","quero","fazer","comer","uma","um","com","que","para","tem",
 ])
 
 function tokenize(text: string): string[] {
@@ -228,25 +237,21 @@ function libraryReply(r: (typeof LIBRARY)[number]): string {
   return `🌿 ${r.title}\n${r.desc}\n\n⏱ ${r.time} min  •  🍽 ${r.servings} servings  •  ${r.tags}\n\n📋 How to make it:\n${r.how}\n\nLooks good? 😋 Tell me more ingredients and I can find something else!`
 }
 
-// ---------------------------------------------------------------------------
-// Route handler
-// ---------------------------------------------------------------------------
 export async function POST(req: Request) {
   let body: RequestBody
   try {
     body = (await req.json()) as RequestBody
   } catch {
-    return NextResponse.json({ reply: "What would you like to cook today? Tell me your ingredients! 🥦" })
+    return NextResponse.json({ reply: "What would you like to cook? Tell me your ingredients! 🥦" })
   }
 
   const message = body.message?.trim()
   const history = body.history ?? []
-
   if (!message) {
-    return NextResponse.json({ reply: "Tell me what you have in the fridge and I'll find something delicious! 🥦" })
+    return NextResponse.json({ reply: "Tell me what you have and I'll find something delicious! 🥦" })
   }
 
-  // 1. Try Gemini (free)
+  // 1. Gemini (free)
   const geminiReply = await askGemini(message, history)
   if (geminiReply) {
     const res = NextResponse.json({ reply: geminiReply })
@@ -254,7 +259,7 @@ export async function POST(req: Request) {
     return res
   }
 
-  // 2. Try Claude (paid, optional)
+  // 2. Claude (paid optional)
   const claudeReply = await askClaude(message, history)
   if (claudeReply) {
     const res = NextResponse.json({ reply: claudeReply })
@@ -262,7 +267,7 @@ export async function POST(req: Request) {
     return res
   }
 
-  // 3. Try database
+  // 3. Database
   try {
     const keywords = tokenize(message)
     if (keywords.length > 0) {
@@ -287,7 +292,7 @@ export async function POST(req: Request) {
       }
     }
   } catch {
-    // DB unavailable — fall through
+    // DB unavailable
   }
 
   // 4. In-memory fallback
